@@ -1,0 +1,54 @@
+@use "../abstracts/mixins" as mixins;
+
+.btn {
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  @include mixins.transition-fast;
+}
+
+.btn--primary {
+  padding: 9px 20px;
+  background: var(--gold);
+  color: var(--white);
+  border: none;
+  font-size: 12px;
+  letter-spacing: 0.07em;
+  font-weight: 600;
+}
+
+.btn--outline {
+  padding: 9px 20px;
+  background: transparent;
+  border: 1.5px solid var(--border-focus);
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 0.07em;
+}
+
+.btn--ghost {
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-sub);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+.btn--danger-soft {
+  background: var(--red-bg);
+  border-color: #f5c6c2;
+  color: var(--red);
+}
+
+.btn--small {
+  font-size: 11px;
+  padding: 5px 12px;
+}
+
+.btn--icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 18px;
+}

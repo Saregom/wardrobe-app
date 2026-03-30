@@ -1,0 +1,84 @@
+@use "../abstracts/mixins" as mixins;
+
+.app-shell__header {
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  background: rgba(242, 237, 230, 0.96);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.app-shell__header-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 62px;
+}
+
+.app-shell__brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.app-shell__brand-title {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.app-shell__brand-subtitle {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.2em;
+}
+
+.app-shell__nav {
+  display: flex;
+  gap: 2px;
+}
+
+.app-shell__tab {
+  padding: 8px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-sub);
+  border-bottom: 2.5px solid transparent;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  font-family: inherit;
+  font-weight: 400;
+  @include mixins.transition-fast;
+}
+
+.app-shell__tab.is-active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  font-weight: 600;
+}
+
+.app-shell__main {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 36px 24px;
+}
+
+.app-shell__footer {
+  text-align: center;
+  padding: 24px;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+.app-shell__footer-text {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+}

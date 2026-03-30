@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Mono:wght@300;400&display=swap"); 
+
+$bg: #f2ede6;
+$bg-card: #faf8f6;
+$bg-panel: #ede6dc;
+$border: #d8cfc4;
+$border-focus: #a87c3e;
+$gold: #a87c3e;
+$gold-light: #c9a96e;
+$text: #2a2218;
+$text-sub: #7a6e62;
+$text-muted: #b0a498;
+$red: #c0392b;
+$red-bg: #fdecea;
+$white: #ffffff;
+
+:root {
+  --bg: #{$bg};
+  --bg-card: #{$bg-card};
+  --bg-panel: #{$bg-panel};
+  --border: #{$border};
+  --border-focus: #{$border-focus};
+  --gold: #{$gold};
+  --gold-light: #{$gold-light};
+  --text: #{$text};
+  --text-sub: #{$text-sub};
+  --text-muted: #{$text-muted};
+  --red: #{$red};
+  --red-bg: #{$red-bg};
+  --white: #{$white};
+  --font-serif: "Cormorant Garamond", serif;
+  --font-mono: "DM Mono", monospace;
+}

@@ -1,0 +1,16 @@
+@mixin transition-fast {
+  transition: all 0.15s;
+}
+
+@mixin section-title {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  color: var(--text);
+  margin: 0;
+}
+
+@mixin panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}

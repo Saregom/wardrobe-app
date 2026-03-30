@@ -1,9 +1,7 @@
+import BasePage from "./pages/BasePage";
+
 function App() {
-  return (
-    <>
-      
-    </>
-  )
+  return <BasePage />;
 }
 
-export default App
+export default App;

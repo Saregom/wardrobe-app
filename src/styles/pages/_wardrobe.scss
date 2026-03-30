@@ -1,0 +1,58 @@
+@use "../abstracts/mixins" as mixins;
+
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.page-heading__title {
+  @include mixins.section-title;
+}
+
+.page-heading__meta {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.filter-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filter-pills__button {
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--text-sub);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.filter-pills__button.is-active {
+  border: 1.5px solid var(--gold);
+  background: var(--gold);
+  color: var(--white);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 60px 0;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+}
+
+.grid-wardrobe {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
