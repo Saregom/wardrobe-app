@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Mono:wght@300;400&display=swap"); 
 
 $bg: #f2ede6;
+$bg-secondary: #faf8f6;
 $bg-card: #faf8f6;
 $bg-panel: #ede6dc;
 $border: #d8cfc4;
@@ -16,6 +17,7 @@ $white: #ffffff;
 
 :root {
   --bg: #{$bg};
+  --bg-secondary: #{$bg-secondary};
   --bg-card: #{$bg-card};
   --bg-panel: #{$bg-panel};
   --border: #{$border};

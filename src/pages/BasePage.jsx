@@ -6,6 +6,7 @@ import WardrobePage from "./WardrobePage";
 
 export default function BasePage() {
   const [tab, setTab] = useState("wardrobe");
+  const [menuOpen, setMenuOpen] = useState(false);
   const [items, setItems] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("wardrobe_items") || "[]");
@@ -46,16 +47,34 @@ export default function BasePage() {
     <>
       <header className="app-shell__header">
         <div className="app-shell__header-inner">
-          <div className="app-shell__brand">
-            <span className="app-shell__brand-title">WARDROBER</span>
-            {/* <span className="app-shell__brand-subtitle">× Saregom</span> */}
+          <div className="app-shell__mobile-row">
+            <div className="app-shell__brand">
+              <span className="app-shell__brand-title">WARDROBER</span>
+              {/* <span className="app-shell__brand-subtitle">× Saregom</span> */}
+            </div>
+
+            <button
+              type="button"
+              className={`app-shell__menu-btn ${menuOpen ? "is-open" : ""}`}
+              onClick={() => setMenuOpen((prev) => !prev)}
+              aria-label="Abrir menu"
+              aria-expanded={menuOpen}
+              aria-controls="app-main-nav"
+            >
+              <span />
+              <span />
+              <span />
+            </button>
           </div>
 
-          <nav className="app-shell__nav">
+          <nav id="app-main-nav" className={`app-shell__nav ${menuOpen ? "is-open" : ""}`}>
             {TABS.map((entry) => (
               <button
                 key={entry.id}
-                onClick={() => setTab(entry.id)}
+                onClick={() => {
+                  setTab(entry.id);
+                  setMenuOpen(false);
+                }}
                 className={`app-shell__tab ${tab === entry.id ? "is-active" : ""}`}
               >
                 {entry.icon} {entry.label}
