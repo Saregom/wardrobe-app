@@ -1,9 +1,14 @@
 import { useState } from "react";
+import { CATEGORIES } from "../constants/appConstants";
 import ClothingCard from "./ClothingCard";
 
 export default function OutfitForm({ initial, items, onSave, onCancel, title }) {
   const [form, setForm] = useState(initial || { name: "", itemIds: [] });
   const [showErrors, setShowErrors] = useState(false);
+  const [filter, setFilter] = useState("all");
+
+  const filteredItems =
+    filter === "all" ? items : items.filter((item) => item.category === filter);
 
   const nameError = showErrors && !form.name.trim();
   const itemsError = showErrors && form.itemIds.length === 0;
@@ -46,16 +51,34 @@ export default function OutfitForm({ initial, items, onSave, onCancel, title }) 
         {items.length === 0 ? (
           <p className="page-heading__meta">Primero agrega prendas en Mi Armario</p>
         ) : (
-          <div className="grid-outfit-picker">
-            {items.map((item) => (
-              <ClothingCard
-                key={item.id}
-                item={item}
-                selected={form.itemIds.includes(item.id)}
-                onSelect={() => toggleItem(item.id)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="filter-pills">
+              {CATEGORIES.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setFilter(category.id)}
+                  className={`filter-pills__button ${filter === category.id ? "is-active" : ""}`}
+                >
+                  {category.icon} {category.label}
+                </button>
+              ))}
+            </div>
+
+            {filteredItems.length === 0 ? (
+              <p className="page-heading__meta">No hay prendas en esta categoría.</p>
+            ) : (
+              <div className="grid-outfit-picker">
+                {filteredItems.map((item) => (
+                  <ClothingCard
+                    key={item.id}
+                    item={item}
+                    selected={form.itemIds.includes(item.id)}
+                    onSelect={() => toggleItem(item.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
         {items.length > 0 && itemsError && <p className="form-error">Selecciona al menos una prenda.</p>}
       </div>
