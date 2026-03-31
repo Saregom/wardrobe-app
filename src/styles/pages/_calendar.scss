@@ -28,6 +28,13 @@
   margin-bottom: 20px;
 }
 
+@media (max-width: 640px) {
+  .calendar-grid {
+    margin-bottom: 10px;
+  }
+    
+}
+
 .calendar-grid__weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -47,13 +54,14 @@
 .calendar-grid__days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 86px;
 }
 
 .calendar-grid__empty,
 .calendar-grid__day {
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  min-height: 70px;
+  height: 86px;
 }
 
 .calendar-grid__day {
@@ -61,6 +69,7 @@
   cursor: pointer;
   transition: background 0.12s;
   background: var(--bg-card);
+  overflow: hidden;
 }
 
 .calendar-grid__day.is-selected {
@@ -102,7 +111,7 @@
 }
 
 .calendar-grid__assigned {
-  font-size: 10px;
+  font-size: clamp(9px, 1.2vw, 10px);
   line-height: 1.3;
   color: var(--gold);
   display: flex;

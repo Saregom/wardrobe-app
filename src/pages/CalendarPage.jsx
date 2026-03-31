@@ -118,9 +118,9 @@ export default function CalendarPage({ items, outfits, schedule, setSchedule }) 
 
                 {assigned && (
                   <div className={`calendar-grid__assigned ${isPast ? "is-past" : ""}`}>
-                    <span>{isPast ? "✓" : "◈"}</span>
                     <span className="calendar-grid__assigned-name">
-                      {assigned.name.substring(0, 20)}
+                      ◈
+                      {assigned.name.substring(0, 25)}
                       {assigned.name.length > 20 ? "…" : ""}
                     </span>
                   </div>
