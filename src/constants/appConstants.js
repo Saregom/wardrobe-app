@@ -62,4 +62,10 @@ export const TABS = [
   { id: "calendar", label: "Calendario", icon: "◷" },
 ];
 
-export const generateId = () => Math.random().toString(36).substr(2, 9);
+export const generateId = () => {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+};
