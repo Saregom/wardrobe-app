@@ -3,6 +3,18 @@ import ClothingCard from "./ClothingCard";
 
 export default function OutfitForm({ initial, items, onSave, onCancel, title }) {
   const [form, setForm] = useState(initial || { name: "", itemIds: [] });
+  const [showErrors, setShowErrors] = useState(false);
+
+  const nameError = showErrors && !form.name.trim();
+  const itemsError = showErrors && form.itemIds.length === 0;
+
+  function handleSave() {
+    setShowErrors(true);
+    if (!form.name.trim() || form.itemIds.length === 0) {
+      return;
+    }
+    onSave(form);
+  }
 
   function toggleItem(itemId) {
     setForm((prev) => ({
@@ -23,8 +35,10 @@ export default function OutfitForm({ initial, items, onSave, onCancel, title }) 
           value={form.name}
           onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
           placeholder="Ej: Look casual viernes"
-          className="form-control"
+          className={`form-control ${nameError ? "is-error" : ""}`}
+          aria-invalid={nameError}
         />
+        {nameError && <p className="form-error">El nombre del outfit es obligatorio.</p>}
       </div>
 
       <div className="form-field form-field--spaced">
@@ -43,13 +57,11 @@ export default function OutfitForm({ initial, items, onSave, onCancel, title }) 
             ))}
           </div>
         )}
+        {items.length > 0 && itemsError && <p className="form-error">Selecciona al menos una prenda.</p>}
       </div>
 
       <div className="form-actions">
-        <button
-          onClick={() => form.name.trim() && form.itemIds.length > 0 && onSave(form)}
-          className="btn btn--primary"
-        >
+        <button onClick={handleSave} className="btn btn--primary">
           Guardar outfit
         </button>
         <button onClick={onCancel} className="btn btn--ghost">

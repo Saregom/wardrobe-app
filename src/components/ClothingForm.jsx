@@ -4,6 +4,17 @@ import ColorPicker from "./ColorPicker";
 
 export default function ClothingForm({ initial, onSave, onCancel, title }) {
   const [form, setForm] = useState(initial || { name: "", category: "camisas", color: "#2471A3" });
+  const [showErrors, setShowErrors] = useState(false);
+
+  const nameError = showErrors && !form.name.trim();
+
+  function handleSave() {
+    setShowErrors(true);
+    if (!form.name.trim()) {
+      return;
+    }
+    onSave(form);
+  }
 
   return (
     <div className="form-card">
@@ -16,8 +27,10 @@ export default function ClothingForm({ initial, onSave, onCancel, title }) {
             value={form.name}
             onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
             placeholder="Ej: Camisa Oxford Azul"
-            className="form-control"
+            className={`form-control ${nameError ? "is-error" : ""}`}
+            aria-invalid={nameError}
           />
+          {nameError && <p className="form-error">El nombre es obligatorio.</p>}
         </div>
 
         <div>
@@ -42,7 +55,7 @@ export default function ClothingForm({ initial, onSave, onCancel, title }) {
       </div>
 
       <div className="form-actions">
-        <button onClick={() => form.name.trim() && onSave(form)} className="btn btn--primary">
+        <button onClick={handleSave} className="btn btn--primary">
           Guardar
         </button>
         <button onClick={onCancel} className="btn btn--ghost">
