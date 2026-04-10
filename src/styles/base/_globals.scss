@@ -20,6 +20,10 @@ select option {
   color: var(--text);
 }
 
+.page-form-anchor {
+  scroll-margin-top: 84px;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
 }

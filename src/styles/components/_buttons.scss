@@ -36,9 +36,13 @@
 }
 
 .btn--danger-soft {
+  padding: 7px 14px;
   background: var(--red-bg);
-  border-color: #f5c6c2;
+  border: 1px solid #f5c6c2;
   color: var(--red);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  font-weight: 500;
 }
 
 .btn--small {

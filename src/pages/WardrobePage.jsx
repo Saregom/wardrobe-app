@@ -1,14 +1,39 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CATEGORIES, generateId } from "../constants/appConstants";
 import ClothingCard from "../components/ClothingCard";
 import ClothingForm from "../components/ClothingForm";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 export default function WardrobePage({ items, setItems }) {
   const [filter, setFilter] = useState("all");
   const [showForm, setShowForm] = useState(false);
   const [editItem, setEditItem] = useState(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState(null);
+  const formAnchorRef = useRef(null);
 
   const filtered = filter === "all" ? items : items.filter((item) => item.category === filter);
+  const pendingDeleteItem = items.find((item) => item.id === pendingDeleteId) || null;
+
+  useEffect(() => {
+    if (!editItem || !formAnchorRef.current) {
+      return;
+    }
+
+    const formAnchor = formAnchorRef.current;
+    const headerOffset = 84;
+    const top = window.scrollY + formAnchor.getBoundingClientRect().top - headerOffset;
+
+    window.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
+
+    const focusTimer = window.setTimeout(() => {
+      const focusTarget = formAnchor.querySelector("input, select, button");
+      focusTarget?.focus({ preventScroll: true });
+    }, 320);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+    };
+  }, [editItem]);
 
   function addItem(form) {
     setItems((prev) => [...prev, { ...form, id: generateId() }]);
@@ -27,6 +52,19 @@ export default function WardrobePage({ items, setItems }) {
     }
   }
 
+  function requestDeleteItem(itemId) {
+    setPendingDeleteId(itemId);
+  }
+
+  function confirmDeleteItem() {
+    if (!pendingDeleteId) {
+      return;
+    }
+
+    deleteItem(pendingDeleteId);
+    setPendingDeleteId(null);
+  }
+
   return (
     <div className="wardrobe-page">
       <div className="page-heading">
@@ -42,15 +80,21 @@ export default function WardrobePage({ items, setItems }) {
         )}
       </div>
 
-      {showForm && <ClothingForm title="Nueva prenda" onSave={addItem} onCancel={() => setShowForm(false)} />}
+      {showForm && (
+        <div ref={formAnchorRef} className="page-form-anchor">
+          <ClothingForm title="Nueva prenda" onSave={addItem} onCancel={() => setShowForm(false)} />
+        </div>
+      )}
 
       {editItem && (
-        <ClothingForm
-          title={`Editando: ${editItem.name}`}
-          initial={{ name: editItem.name, category: editItem.category, color: editItem.color }}
-          onSave={saveEdit}
-          onCancel={() => setEditItem(null)}
-        />
+        <div ref={formAnchorRef} className="page-form-anchor">
+          <ClothingForm
+            title={`Editando: ${editItem.name}`}
+            initial={{ name: editItem.name, category: editItem.category, color: editItem.color }}
+            onSave={saveEdit}
+            onCancel={() => setEditItem(null)}
+          />
+        </div>
       )}
 
       <div className="filter-pills">
@@ -73,7 +117,7 @@ export default function WardrobePage({ items, setItems }) {
             <ClothingCard
               key={item.id}
               item={item}
-              onDelete={deleteItem}
+              onDelete={requestDeleteItem}
               onEdit={(entry) => {
                 setEditItem(entry);
                 setShowForm(false);
@@ -82,6 +126,16 @@ export default function WardrobePage({ items, setItems }) {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={Boolean(pendingDeleteItem)}
+        title="Eliminar prenda"
+        message={`Vas a eliminar \"${pendingDeleteItem?.name || "esta prenda"}\". Esta accion no se puede deshacer.`}
+        confirmLabel="Si, eliminar"
+        cancelLabel="Volver"
+        onConfirm={confirmDeleteItem}
+        onCancel={() => setPendingDeleteId(null)}
+      />
     </div>
   );
 }
