@@ -151,7 +151,7 @@ export default function BasePage() {
                   setMenuOpen(false);
                   setDataMenuOpen(false);
                 }}
-                className={`app-shell__tab ${tab === entry.id ? "is-active" : ""}`}
+                className={`app-shell__tab app-shell__tab--primary ${tab === entry.id ? "is-active" : ""}`}
               >
                 {entry.icon} {entry.label}
               </button>
@@ -196,6 +196,26 @@ export default function BasePage() {
           <CalendarPage items={items} outfits={outfits} schedule={schedule} setSchedule={setSchedule} />
         )}
       </main>
+
+      <nav className="app-shell__mobile-bottom-nav" aria-label="Navegacion principal">
+        {TABS.map((entry) => (
+          <button
+            key={`mobile-${entry.id}`}
+            type="button"
+            onClick={() => {
+              setTab(entry.id);
+              setMenuOpen(false);
+              setDataMenuOpen(false);
+            }}
+            className={`app-shell__mobile-tab ${tab === entry.id ? "is-active" : ""}`}
+          >
+            <span className="app-shell__mobile-tab-icon" aria-hidden="true">
+              {entry.icon}
+            </span>
+            <span className="app-shell__mobile-tab-label">{entry.label}</span>
+          </button>
+        ))}
+      </nav>
 
       {/* <footer className="app-shell__footer">
         <span className="app-shell__footer-text">VESTIDOR ATELIER - TU GUARDARROPA DIGITAL</span>
