@@ -128,6 +128,74 @@
   text-overflow: ellipsis;
 }
 
+.calendar-grid__note {
+  font-size: 10px;
+  line-height: 1.3;
+  color: var(--text-sub);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+  padding-left: 2px;
+  border-left: 2px solid var(--gold-light);
+}
+
+.calendar-grid__note.is-past {
+  color: var(--text-muted);
+  border-left-color: var(--border);
+}
+
+.calendar-detail__note {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+}
+
+.calendar-detail__note-text {
+  font-size: 13px;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.calendar-detail__note-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.calendar-detail__note-add {
+  width: 100%;
+  border: 1.5px dashed var(--border);
+  background: transparent;
+  border-radius: 6px;
+  padding: 10px;
+  color: var(--text-sub);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.calendar-detail__note-add:hover {
+  border-color: var(--gold-light);
+  color: var(--gold);
+}
+
+.calendar-detail__note-input {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 13px;
+  box-sizing: border-box;
+  font-family: inherit;
+  resize: vertical;
+}
+
 .calendar-detail {
   @include mixins.panel;
   padding: 20px;

@@ -33,6 +33,14 @@ export default function BasePage() {
     }
   });
 
+  const [notes, setNotes] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("wardrobe_notes") || "{}");
+    } catch {
+      return {};
+    }
+  });
+
   useEffect(() => {
     localStorage.setItem("wardrobe_items", JSON.stringify(items));
   }, [items]);
@@ -45,11 +53,15 @@ export default function BasePage() {
     localStorage.setItem("wardrobe_schedule", JSON.stringify(schedule));
   }, [schedule]);
 
+  useEffect(() => {
+    localStorage.setItem("wardrobe_notes", JSON.stringify(notes));
+  }, [notes]);
+
   function handleExport() {
     const payload = {
       version: 1,
       exportedAt: new Date().toISOString(),
-      data: { items, outfits, schedule },
+      data: { items, outfits, schedule, notes },
     };
 
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -83,12 +95,14 @@ export default function BasePage() {
       const importedItems = source?.items;
       const importedOutfits = source?.outfits;
       const importedSchedule = source?.schedule;
+      const importedNotes = source?.notes;
 
       const isValid = Array.isArray(importedItems) &&
         Array.isArray(importedOutfits) &&
         importedSchedule &&
         typeof importedSchedule === "object" &&
-        !Array.isArray(importedSchedule);
+        !Array.isArray(importedSchedule) &&
+        (!importedNotes || (typeof importedNotes === "object" && !Array.isArray(importedNotes)));
 
       if (!isValid) {
         window.alert("El archivo no tiene el formato esperado.");
@@ -96,7 +110,7 @@ export default function BasePage() {
       }
 
       const confirmed = window.confirm(
-        "Esto reemplazara tus datos actuales (prendas, outfits y calendario). Quieres continuar?"
+        "Esto reemplazara tus datos actuales (prendas, outfits, calendario y notas). Quieres continuar?"
       );
 
       if (!confirmed) {
@@ -106,6 +120,7 @@ export default function BasePage() {
       setItems(importedItems);
       setOutfits(importedOutfits);
       setSchedule(importedSchedule);
+      setNotes(importedNotes || {});
       setTab("wardrobe");
       setMenuOpen(false);
       setDataMenuOpen(false);
@@ -193,7 +208,14 @@ export default function BasePage() {
         {tab === "wardrobe" && <WardrobePage items={items} setItems={setItems} />}
         {tab === "outfits" && <OutfitsPage items={items} outfits={outfits} setOutfits={setOutfits} />}
         {tab === "calendar" && (
-          <CalendarPage items={items} outfits={outfits} schedule={schedule} setSchedule={setSchedule} />
+          <CalendarPage
+            items={items}
+            outfits={outfits}
+            schedule={schedule}
+            setSchedule={setSchedule}
+            notes={notes}
+            setNotes={setNotes}
+          />
         )}
       </main>
 

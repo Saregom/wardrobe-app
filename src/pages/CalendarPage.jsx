@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MONTHS, WEEKDAYS } from "../constants/appConstants";
 import OutfitCard from "../components/OutfitCard";
 
-export default function CalendarPage({ items, outfits, schedule, setSchedule }) {
+export default function CalendarPage({ items, outfits, schedule, setSchedule, notes, setNotes }) {
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [editingNote, setEditingNote] = useState(false);
+  const [draftNote, setDraftNote] = useState("");
+
+  useEffect(() => {
+    setEditingNote(false);
+    setDraftNote(selectedDate ? notes[selectedDate] || "" : "");
+  }, [selectedDate, notes]);
 
   const firstDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
@@ -35,6 +42,29 @@ export default function CalendarPage({ items, outfits, schedule, setSchedule }) 
     });
   }
 
+  function saveNote() {
+    const trimmed = draftNote.trim();
+    setNotes((prev) => {
+      const next = { ...prev };
+      if (trimmed) {
+        next[selectedDate] = trimmed;
+      } else {
+        delete next[selectedDate];
+      }
+      return next;
+    });
+    setEditingNote(false);
+  }
+
+  function deleteNote() {
+    setNotes((prev) => {
+      const next = { ...prev };
+      delete next[selectedDate];
+      return next;
+    });
+    setEditingNote(false);
+  }
+
   const cells = [];
   for (let i = 0; i < firstDay; i += 1) {
     cells.push(null);
@@ -45,6 +75,7 @@ export default function CalendarPage({ items, outfits, schedule, setSchedule }) 
 
   const selectedOutfitId = selectedDate ? schedule[selectedDate] : null;
   const selectedOutfit = selectedOutfitId ? outfits.find((outfit) => outfit.id === selectedOutfitId) : null;
+  const selectedNote = selectedDate ? notes[selectedDate] || "" : "";
 
   const prevMonth = () => {
     if (viewMonth === 0) {
@@ -99,6 +130,7 @@ export default function CalendarPage({ items, outfits, schedule, setSchedule }) 
 
             const key = dateKey(viewYear, viewMonth, day);
             const assigned = schedule[key] ? outfits.find((outfit) => outfit.id === schedule[key]) : null;
+            const dayNote = notes[key] || "";
             const isPast = isPastDay(day);
             const isSelected = selectedDate === key;
             const todayCell = isToday(day);
@@ -123,6 +155,13 @@ export default function CalendarPage({ items, outfits, schedule, setSchedule }) 
                       {assigned.name.substring(0, 25)}
                       {assigned.name.length > 20 ? "…" : ""}
                     </span>
+                  </div>
+                )}
+
+                {dayNote && (
+                  <div className={`calendar-grid__note ${isPast ? "is-past" : ""}`}>
+                    {dayNote.substring(0, 30)}
+                    {dayNote.length > 30 ? "…" : ""}
                   </div>
                 )}
               </div>
@@ -152,6 +191,47 @@ export default function CalendarPage({ items, outfits, schedule, setSchedule }) 
             <button onClick={() => setSelectedDate(null)} className="calendar-detail__close">
               ✕
             </button>
+          </div>
+
+          <div className="calendar-detail__note">
+            {editingNote ? (
+              <>
+                <textarea
+                  value={draftNote}
+                  onChange={(e) => setDraftNote(e.target.value)}
+                  placeholder="Escribe una nota corta para este día..."
+                  className="calendar-detail__note-input"
+                  rows={2}
+                />
+                <div className="calendar-detail__note-actions">
+                  <button onClick={saveNote} className="btn btn--primary btn--small">
+                    Guardar
+                  </button>
+                  <button onClick={() => setEditingNote(false)} className="btn btn--ghost btn--small">
+                    Cancelar
+                  </button>
+                </div>
+              </>
+            ) : selectedNote ? (
+              <>
+                <div className="calendar-detail__note-text">{selectedNote}</div>
+                <div className="calendar-detail__note-actions">
+                  <button onClick={() => setEditingNote(true)} className="btn btn--ghost btn--small">
+                    ✏ Editar
+                  </button>
+                  <button onClick={deleteNote} className="btn btn--ghost btn--danger-soft btn--small">
+                    ✕ Borrar
+                  </button>
+                </div>
+              </>
+            ) : (
+              <button
+                onClick={() => setEditingNote(true)}
+                className="calendar-detail__note-add"
+              >
+                + Agregar nota
+              </button>
+            )}
           </div>
 
           {selectedOutfit ? (
