@@ -1,15 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { generateId } from "../constants/appConstants";
+import { generateId, CATEGORIES } from "../constants/appConstants";
 import OutfitCard from "../components/OutfitCard";
 import OutfitForm from "../components/OutfitForm";
 import ConfirmDialog from "../components/ConfirmDialog";
+
+const FILTER_CATEGORIES = ["camisas", "pantalones", "sacos", "chaquetas"];
 
 export default function OutfitsPage({ items, outfits, setOutfits }) {
   const [showForm, setShowForm] = useState(false);
   const [editOutfit, setEditOutfit] = useState(null);
   const [pendingDeleteId, setPendingDeleteId] = useState(null);
+  const [filterItemId, setFilterItemId] = useState("");
   const formAnchorRef = useRef(null);
   const pendingDeleteOutfit = outfits.find((outfit) => outfit.id === pendingDeleteId) || null;
+
+  const filterableItems = items.filter((item) => FILTER_CATEGORIES.includes(item.category));
+  const visibleOutfits = filterItemId
+    ? outfits.filter((outfit) => outfit.itemIds.includes(filterItemId))
+    : outfits;
 
   useEffect(() => {
     if (!editOutfit || !formAnchorRef.current) {
@@ -79,6 +87,38 @@ export default function OutfitsPage({ items, outfits, setOutfits }) {
         )}
       </div>
 
+      {filterableItems.length > 0 && (
+        <div className="outfits-filter">
+          <label className="form-label" htmlFor="outfit-filter">
+            Filtrar por prenda
+          </label>
+          <select
+            id="outfit-filter"
+            className="form-control"
+            value={filterItemId}
+            onChange={(e) => setFilterItemId(e.target.value)}
+          >
+            <option value="">Todas las prendas</option>
+            {FILTER_CATEGORIES.map((categoryId) => {
+              const category = CATEGORIES.find((entry) => entry.id === categoryId);
+              const categoryItems = filterableItems.filter((item) => item.category === categoryId);
+              if (categoryItems.length === 0) {
+                return null;
+              }
+              return (
+                <optgroup key={categoryId} label={`${category.icon} ${category.label}`}>
+                  {categoryItems.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </optgroup>
+              );
+            })}
+          </select>
+        </div>
+      )}
+
       {showForm && (
         <div ref={formAnchorRef} className="page-form-anchor">
           <OutfitForm title="Nuevo outfit" items={items} onSave={addOutfit} onCancel={() => setShowForm(false)} />
@@ -99,9 +139,11 @@ export default function OutfitsPage({ items, outfits, setOutfits }) {
 
       {outfits.length === 0 ? (
         <div className="empty-state">Crea tu primer outfit combinando prendas</div>
+      ) : visibleOutfits.length === 0 ? (
+        <div className="empty-state">No hay outfits que incluyan esa prenda</div>
       ) : (
         <div className="grid-outfits">
-          {outfits.map((outfit) => (
+          {visibleOutfits.map((outfit) => (
             <OutfitCard
               key={outfit.id}
               outfit={outfit}
