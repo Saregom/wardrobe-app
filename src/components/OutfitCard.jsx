@@ -1,7 +1,17 @@
 import { CATEGORIES } from "../constants/appConstants";
 
+const CATEGORY_ORDER = { camisas: 0, pantalones: 1, sacos: 2, chaquetas: 2 };
+const CATEGORY_FALLBACK = 3;
+
 export default function OutfitCard({ outfit, items, onSelect, selected, onDelete, onEdit }) {
-  const outfitItems = outfit.itemIds.map((id) => items.find((item) => item.id === id)).filter(Boolean);
+  const outfitItems = outfit.itemIds
+    .map((id) => items.find((item) => item.id === id))
+    .filter(Boolean)
+    .sort((a, b) => {
+      const orderA = CATEGORY_ORDER[a.category] ?? CATEGORY_FALLBACK;
+      const orderB = CATEGORY_ORDER[b.category] ?? CATEGORY_FALLBACK;
+      return orderA - orderB;
+    });
 
   return (
     <div

@@ -114,7 +114,8 @@
 
 .outfit-card__tags {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 4px;
 }
 
