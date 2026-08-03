@@ -11,13 +11,27 @@ export default function OutfitsPage({ items, outfits, setOutfits }) {
   const [editOutfit, setEditOutfit] = useState(null);
   const [pendingDeleteId, setPendingDeleteId] = useState(null);
   const [filterItemId, setFilterItemId] = useState("");
+  const [filterOpen, setFilterOpen] = useState(false);
   const formAnchorRef = useRef(null);
+  const filterRef = useRef(null);
   const pendingDeleteOutfit = outfits.find((outfit) => outfit.id === pendingDeleteId) || null;
 
   const filterableItems = items.filter((item) => FILTER_CATEGORIES.includes(item.category));
+  const filterItem = items.find((item) => item.id === filterItemId);
   const visibleOutfits = filterItemId
     ? outfits.filter((outfit) => outfit.itemIds.includes(filterItemId))
     : outfits;
+
+  useEffect(() => {
+    function handleOutsideClick(event) {
+      if (filterOpen && filterRef.current && !filterRef.current.contains(event.target)) {
+        setFilterOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [filterOpen]);
 
   useEffect(() => {
     if (!editOutfit || !formAnchorRef.current) {
@@ -88,34 +102,67 @@ export default function OutfitsPage({ items, outfits, setOutfits }) {
       </div>
 
       {filterableItems.length > 0 && (
-        <div className="outfits-filter">
-          <label className="form-label" htmlFor="outfit-filter">
-            Filtrar por prenda
-          </label>
-          <select
-            id="outfit-filter"
-            className="form-control"
-            value={filterItemId}
-            onChange={(e) => setFilterItemId(e.target.value)}
+        <div className="outfits-filter" ref={filterRef}>
+          <span className="form-label">Filtrar por prenda</span>
+          <button
+            type="button"
+            className={`outfits-filter__button ${filterOpen ? "is-open" : ""}`}
+            onClick={() => setFilterOpen((prev) => !prev)}
+            aria-expanded={filterOpen}
           >
-            <option value="">Todas las prendas</option>
-            {FILTER_CATEGORIES.map((categoryId) => {
-              const category = CATEGORIES.find((entry) => entry.id === categoryId);
-              const categoryItems = filterableItems.filter((item) => item.category === categoryId);
-              if (categoryItems.length === 0) {
-                return null;
-              }
-              return (
-                <optgroup key={categoryId} label={`${category.icon} ${category.label}`}>
-                  {categoryItems.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </optgroup>
-              );
-            })}
-          </select>
+            {filterItem ? (
+              <>
+                <span className="outfits-filter__dot" style={{ background: filterItem.color }} />
+                {filterItem.name}
+              </>
+            ) : (
+              "Todas las prendas"
+            )}
+            <span className="outfits-filter__caret">▾</span>
+          </button>
+
+          {filterOpen && (
+            <div className="outfits-filter__dropdown">
+              <button
+                type="button"
+                className={`outfits-filter__option ${!filterItemId ? "is-active" : ""}`}
+                onClick={() => {
+                  setFilterItemId("");
+                  setFilterOpen(false);
+                }}
+              >
+                Todas las prendas
+              </button>
+              {FILTER_CATEGORIES.map((categoryId) => {
+                const category = CATEGORIES.find((entry) => entry.id === categoryId);
+                const categoryItems = filterableItems.filter((item) => item.category === categoryId);
+                if (categoryItems.length === 0) {
+                  return null;
+                }
+                return (
+                  <div key={categoryId} className="outfits-filter__group">
+                    <div className="outfits-filter__group-label">
+                      {category.icon} {category.label}
+                    </div>
+                    {categoryItems.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className={`outfits-filter__option ${filterItemId === item.id ? "is-active" : ""}`}
+                        onClick={() => {
+                          setFilterItemId(item.id);
+                          setFilterOpen(false);
+                        }}
+                      >
+                        <span className="outfits-filter__dot" style={{ background: item.color }} />
+                        {item.name}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 
