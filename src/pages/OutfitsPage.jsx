@@ -1,37 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { generateId, CATEGORIES } from "../constants/appConstants";
+import { generateId } from "../constants/appConstants";
 import OutfitCard from "../components/OutfitCard";
+import OutfitFilter from "../components/OutfitFilter";
 import OutfitForm from "../components/OutfitForm";
 import ConfirmDialog from "../components/ConfirmDialog";
-
-const FILTER_CATEGORIES = ["camisas", "pantalones", "sacos", "chaquetas"];
 
 export default function OutfitsPage({ items, outfits, setOutfits }) {
   const [showForm, setShowForm] = useState(false);
   const [editOutfit, setEditOutfit] = useState(null);
   const [pendingDeleteId, setPendingDeleteId] = useState(null);
   const [filterItemId, setFilterItemId] = useState("");
-  const [filterOpen, setFilterOpen] = useState(false);
   const formAnchorRef = useRef(null);
-  const filterRef = useRef(null);
   const pendingDeleteOutfit = outfits.find((outfit) => outfit.id === pendingDeleteId) || null;
 
-  const filterableItems = items.filter((item) => FILTER_CATEGORIES.includes(item.category));
-  const filterItem = items.find((item) => item.id === filterItemId);
   const visibleOutfits = filterItemId
     ? outfits.filter((outfit) => outfit.itemIds.includes(filterItemId))
     : outfits;
-
-  useEffect(() => {
-    function handleOutsideClick(event) {
-      if (filterOpen && filterRef.current && !filterRef.current.contains(event.target)) {
-        setFilterOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, [filterOpen]);
 
   useEffect(() => {
     if (!editOutfit || !formAnchorRef.current) {
@@ -101,70 +85,7 @@ export default function OutfitsPage({ items, outfits, setOutfits }) {
         )}
       </div>
 
-      {filterableItems.length > 0 && (
-        <div className="outfits-filter" ref={filterRef}>
-          <span className="form-label">Filtrar por prenda</span>
-          <button
-            type="button"
-            className={`outfits-filter__button ${filterOpen ? "is-open" : ""}`}
-            onClick={() => setFilterOpen((prev) => !prev)}
-            aria-expanded={filterOpen}
-          >
-            {filterItem ? (
-              <>
-                <span className="outfits-filter__dot" style={{ background: filterItem.color }} />
-                {filterItem.name}
-              </>
-            ) : (
-              "Todas las prendas"
-            )}
-            <span className="outfits-filter__caret">▾</span>
-          </button>
-
-          {filterOpen && (
-            <div className="outfits-filter__dropdown">
-              <button
-                type="button"
-                className={`outfits-filter__option ${!filterItemId ? "is-active" : ""}`}
-                onClick={() => {
-                  setFilterItemId("");
-                  setFilterOpen(false);
-                }}
-              >
-                Todas las prendas
-              </button>
-              {FILTER_CATEGORIES.map((categoryId) => {
-                const category = CATEGORIES.find((entry) => entry.id === categoryId);
-                const categoryItems = filterableItems.filter((item) => item.category === categoryId);
-                if (categoryItems.length === 0) {
-                  return null;
-                }
-                return (
-                  <div key={categoryId} className="outfits-filter__group">
-                    <div className="outfits-filter__group-label">
-                      {category.icon} {category.label}
-                    </div>
-                    {categoryItems.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        className={`outfits-filter__option ${filterItemId === item.id ? "is-active" : ""}`}
-                        onClick={() => {
-                          setFilterItemId(item.id);
-                          setFilterOpen(false);
-                        }}
-                      >
-                        <span className="outfits-filter__dot" style={{ background: item.color }} />
-                        {item.name}
-                      </button>
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
+      <OutfitFilter items={items} filterItemId={filterItemId} onChange={setFilterItemId} />
 
       {showForm && (
         <div ref={formAnchorRef} className="page-form-anchor">

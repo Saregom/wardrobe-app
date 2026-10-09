@@ -60,7 +60,10 @@ export const TABS = [
   { id: "wardrobe", label: "Armario", icon: "◈" },
   { id: "outfits", label: "Outfits", icon: "✦" },
   { id: "calendar", label: "Calendario", icon: "◷" },
+  { id: "ranking", label: "Ranking", icon: "★" },
 ];
+
+export const FILTER_CATEGORIES = ["camisas", "pantalones", "sacos", "chaquetas"];
 
 export const generateId = () => {
   if (typeof globalThis.crypto?.randomUUID === "function") {
