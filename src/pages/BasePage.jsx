@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { TABS } from "../constants/appConstants";
 import CalendarPage from "./CalendarPage";
 import OutfitsPage from "./OutfitsPage";
+import RankingPage from "./RankingPage";
 import WardrobePage from "./WardrobePage";
 
 export default function BasePage() {
@@ -217,6 +218,7 @@ export default function BasePage() {
             setNotes={setNotes}
           />
         )}
+        {tab === "ranking" && <RankingPage items={items} outfits={outfits} schedule={schedule} />}
       </main>
 
       <nav className="app-shell__mobile-bottom-nav" aria-label="Navegacion principal">

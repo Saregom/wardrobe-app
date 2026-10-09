@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { MONTHS, WEEKDAYS } from "../constants/appConstants";
 import OutfitCard from "../components/OutfitCard";
+import OutfitFilter from "../components/OutfitFilter";
 
 export default function CalendarPage({ items, outfits, schedule, setSchedule, notes, setNotes }) {
   const today = new Date();
@@ -10,6 +11,7 @@ export default function CalendarPage({ items, outfits, schedule, setSchedule, no
   const [showPicker, setShowPicker] = useState(false);
   const [editingNote, setEditingNote] = useState(false);
   const [draftNote, setDraftNote] = useState("");
+  const [pickerFilterItemId, setPickerFilterItemId] = useState("");
 
   useEffect(() => {
     setEditingNote(false);
@@ -76,6 +78,10 @@ export default function CalendarPage({ items, outfits, schedule, setSchedule, no
   const selectedOutfitId = selectedDate ? schedule[selectedDate] : null;
   const selectedOutfit = selectedOutfitId ? outfits.find((outfit) => outfit.id === selectedOutfitId) : null;
   const selectedNote = selectedDate ? notes[selectedDate] || "" : "";
+
+  const pickerOutfits = pickerFilterItemId
+    ? outfits.filter((outfit) => outfit.itemIds.includes(pickerFilterItemId))
+    : outfits;
 
   const prevMonth = () => {
     if (viewMonth === 0) {
@@ -259,11 +265,20 @@ export default function CalendarPage({ items, outfits, schedule, setSchedule, no
             <div className="calendar-picker">
               <div className="calendar-picker__title">Selecciona un outfit</div>
 
+              <OutfitFilter
+                items={items}
+                filterItemId={pickerFilterItemId}
+                onChange={setPickerFilterItemId}
+                compact
+              />
+
               {outfits.length === 0 ? (
                 <p className="calendar-picker__empty">Primero crea outfits en Mis Outfits</p>
+              ) : pickerOutfits.length === 0 ? (
+                <p className="calendar-picker__empty">No hay outfits que incluyan esa prenda</p>
               ) : (
                 <div className="grid-calendar-picker">
-                  {outfits.map((outfit) => (
+                  {pickerOutfits.map((outfit) => (
                     <OutfitCard
                       key={outfit.id}
                       outfit={outfit}
